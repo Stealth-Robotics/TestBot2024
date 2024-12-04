@@ -6,90 +6,61 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
-import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 
-public class PushBlocksPath {
-    public static Pose startPos = new Pose(8, 48, 0);
-    public final PathChain pathChain;
+public class PushBlocksPath extends PathManager {
 
-    private final LifterSubsystem lss;
+    private static final Pose DEFAULT_START_POINT = new Pose(8.25, 48, Math.toRadians(270));
 
-    public PushBlocksPath(LifterSubsystem lss)  {
-        pathChain = PushBlocks().build();
-        this.lss = lss;
+    /**
+     * Sample path using Bezier curves.
+     *
+     */
+    public PushBlocksPath() {
+        super(DEFAULT_START_POINT);
+        fullChain = buildFullPathChain();
+        // chop up the full path chain into separate path chains
+        // so that other operations (like lifter movements) can be done at each segment
+        addPathSegment(buildSegment(0, 1));
+        addPathSegment(buildSegment(2, 3));
     }
 
-    public void updatePose(Pose pose) {
-        startPos = pose;
-    }
-
-    public Pose getPose() {
-        return startPos;
-    }
-
-    public PathBuilder PushBlocks() {
+    public PathChain buildFullPathChain() {
         PathBuilder builder = new PathBuilder();
 
-        return  builder
+        return builder
                 .addPath(
-                        // Line 1
+                        // Move off wall
                         new BezierLine(
-                                new Point(startPos.getX(), startPos.getY(), Point.CARTESIAN),
-                                new Point(10.286, 45.351, Point.CARTESIAN)
+                                new Point(8.250, 48.000, Point.CARTESIAN),
+                                new Point(12.000, 48.000, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(270))
                 .addPath(
-                        // Line 2
+                        // Got past blocks
                         new BezierCurve(
-                                new Point(10.286, 45.351, Point.CARTESIAN),
-                                new Point(22.442, 36.468, Point.CARTESIAN),
-                                new Point(59.844, 36.701, Point.CARTESIAN)
+                                new Point(12.000, 48.000, Point.CARTESIAN),
+                                new Point(17.396, 35.154, Point.CARTESIAN),
+                                new Point(63.000, 35.400, Point.CARTESIAN)
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .addPath(
-                        // Line 3
+                        // move down to blocks
                         new BezierLine(
-                                new Point(59.844, 36.701, Point.CARTESIAN),
-                                new Point(60.000, 26.577, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .addParametricCallback(0, ()-> lss.doPosition(.5))
-                .addPath(
-                        // Line 4
-                        new BezierLine(
-                                new Point(60.000, 26.577, Point.CARTESIAN),
-                                new Point(16.000, 27.000, Point.CARTESIAN)
+                                new Point(63.000, 35.400, Point.CARTESIAN),
+                                new Point(63.000, 25.500, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
-                        // Line 5
+                        // go to observation station
                         new BezierLine(
-                                new Point(16.000, 27.000, Point.CARTESIAN),
-                                new Point(60.000, 23.500, Point.CARTESIAN)
+                                new Point(63.000, 25.500, Point.CARTESIAN),
+                                new Point(13.000, 25.500, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                .setReversed(true)
-                .addPath(
-                        // Line 6
-                        new BezierLine(
-                                new Point(60.000, 23.500, Point.CARTESIAN),
-                                new Point(60.000, 15.000, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .addPath(
-                        // Line 7
-                        new BezierLine(
-                                new Point(60.000, 15.000, Point.CARTESIAN),
-                                new Point(16.671, 14.859, Point.CARTESIAN)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0));
-
+                .build();
     }
 }

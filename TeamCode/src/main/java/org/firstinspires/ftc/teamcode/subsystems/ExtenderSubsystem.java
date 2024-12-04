@@ -3,25 +3,27 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.stealthrobotics.library.StealthSubsystem;
 
 /**
  * Example usage of a single DC motor with PIDF control.
  */
 @Config
-public class ExtenderSubsystem extends SubsystemBase {
+public class ExtenderSubsystem extends StealthSubsystem {
     private static final String MOTOR_NAME_1 = "armextender";
     private final Telemetry telemetryA;
 
     // Adjust these values for your arm. These will need to change
     // based on arm weight and total range of the arm
-    public static double kP = 0.006;
+    public static double kP = 0.007;
     public static double kI = 0.00;
     public static double kD = 0.0;
     public static double kF = 0.00;
@@ -60,16 +62,17 @@ public class ExtenderSubsystem extends SubsystemBase {
             extendMotor.setPower(power * maxSpeed);
 
             if (pidf.atSetPoint()) {
-                extendMotor.setPower(-.1);
+                extendMotor.setPower(0);
                 motorRunTo = false;
             }
         }
 
-        telemetryA.addData("Extend Target:", extendMotor.getTargetPosition());
-        telemetryA.addData("Extend Mode:", extendMotor.getMode());
+//        telemetryA.addData("Extend Target:", extendMotor.getTargetPosition());
+//        telemetryA.addData("Extend Mode:", extendMotor.getMode());
         telemetryA.addData("Extend Position:", extendMotor.getCurrentPosition());
-        telemetryA.addData("Extender Power:", extendMotor.getPower());
-        telemetryA.addData("IsBusy:", extendMotor.isBusy());
+//        telemetryA.addData("Extender Power:", extendMotor.getPower());
+        telemetryA.addData("Extender IsBusy:", extendMotor.isBusy());
+        telemetryA.addData("Extender RunTo:", motorRunTo);
     }
 
     /**
@@ -107,6 +110,11 @@ public class ExtenderSubsystem extends SubsystemBase {
                 motorRunTo = false;
             }
         }
+    }
+
+    public Command setPositionCommand(double position) {
+        return this.runOnce(()-> setPosition(position))
+                .andThen(new WaitUntilCommand(()-> !motorRunTo));
     }
 
     /**

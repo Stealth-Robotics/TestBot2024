@@ -3,16 +3,18 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.stealthrobotics.library.StealthSubsystem;
 
 @Config
-public class LifterSubsystem extends SubsystemBase {
+public class LifterSubsystem extends StealthSubsystem {
     private final DcMotorEx liftMotor;
     private static final String MOTOR_NAME_1 = "elevator";
     private final Telemetry telemetryA;
@@ -108,6 +110,10 @@ public class LifterSubsystem extends SubsystemBase {
         liftMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    public Command setPositionCommand(double position) {
+        return this.runOnce(()-> setPosition(position))
+                .andThen(new WaitUntilCommand(()-> !motorRunTo));
+    }
     public DcMotorEx getMotor1(){
         return liftMotor;
     }

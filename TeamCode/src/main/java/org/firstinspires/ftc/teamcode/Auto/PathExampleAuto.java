@@ -7,16 +7,14 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Paths.OutAndBackPath;
-import org.firstinspires.ftc.teamcode.common.AutoBase;
+import org.firstinspires.ftc.teamcode.common.StealthAutoMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 @Autonomous(name = "Blue pathing example", group = "examples")
-public class PathExampleAuto extends AutoBase {
+public class PathExampleAuto extends StealthAutoMode {
 
 
    private OutAndBackPath path;
-
-   private final SequentialCommandGroup commandGroup = new SequentialCommandGroup();
 
     /**
      * Override this to setup your hardware, commands, button bindings, etc.
@@ -24,10 +22,10 @@ public class PathExampleAuto extends AutoBase {
     @Override
     public void initialize() {
 
-        this.Init();
+        super.initialize();
         telemetryA.addLine("Example path of using the follower");
-        path = new OutAndBackPath(this);
-        commandGroup.addCommands(initPath(), DoPath());
+        path = new OutAndBackPath();
+        commandGroup.addCommands(initPath(), runPath());
     }
 
     @Override
@@ -35,7 +33,7 @@ public class PathExampleAuto extends AutoBase {
         return commandGroup;
     }
 
-    private Command initPath() {
+    protected Command initPath() {
         return new InstantCommand(()->
         {
             Follower follower = followerSubsystem.getFollower();
@@ -50,27 +48,26 @@ public class PathExampleAuto extends AutoBase {
 
     }
 
-    private Command DoPath() {
+    private Command runPath() {
         Follower follower = followerSubsystem.getFollower();
-        assert (path.pathChain.size() == 2);
 
         return new SequentialCommandGroup(
-                new InstantCommand(() ->follower.followPath(path.pathChain.getPath(0))),
+                new InstantCommand(() ->follower.followPath(path.getNextSegment())),
                 new WaitCommand(1000),
-                new InstantCommand(() -> {
-                        getExtender().setPosition(.99);
-                        getLifter().setPosition(.99);
-                }),
+                setBothArms(.99),
                 new WaitCommand(500),
-                new InstantCommand(() ->follower.followPath(path.pathChain.getPath(1))),
+                new InstantCommand(() ->follower.followPath(path.getNextSegment())),
                 new WaitCommand(1000),
-                new InstantCommand(() ->
-                {
-                    getExtender().setPosition(0.01);
-                    getLifter().setPosition(0.01);
-                })
-
+                setBothArms(.01)
         );
+    }
+
+    private InstantCommand setBothArms(double pose) {
+        return new InstantCommand(() ->
+        {
+            getExtender().setPosition(pose);
+            getLifter().setPosition(pose);
+        });
     }
 
 }

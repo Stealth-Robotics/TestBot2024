@@ -7,6 +7,8 @@ import static org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstan
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,6 +19,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Path;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
@@ -109,7 +112,8 @@ public class FollowerSubsystem extends StealthSubsystem {
             Pose newPose = new Pose(curPos.getX(), curPos.getY(), Math.toRadians(adjustedHeading));
             PathBuilder builder = new PathBuilder();
             PathChain path = builder.addPath(
-                            new BezierLine(new Point(curPos.getX(), curPos.getY(), Point.CARTESIAN),
+                            new BezierLine(
+                                    new Point(curPos.getX(), curPos.getY(), Point.CARTESIAN),
                                     new Point(curPos.getX(), curPos.getY(), Point.CARTESIAN)))
                     .setConstantHeadingInterpolation(newPose.getHeading())
                     .build();
@@ -148,6 +152,25 @@ public class FollowerSubsystem extends StealthSubsystem {
         return true;
     }
 
+    public Command followPathCommand(Path path){
+        return followPathCommand(path, false);
+    }
+    
+    public Command followPathCommand(PathChain path){
+        return followPathCommand(path, false);
+    }
+    
+    public Command followPathCommand(Path path, boolean holdPoint){
+        return this.runOnce(()-> follower.followPath(path,holdPoint))
+                .andThen(new WaitUntilCommand(()-> !follower.isBusy()));
+    }
+    public Command followPathCommand(PathChain path, boolean holdPoint){
+        return this.runOnce(()-> follower.followPath(path,holdPoint))
+                .andThen(new WaitUntilCommand(()-> !follower.isBusy()));
+    }
+    public void setPose(Pose pose){
+        follower.setPose(pose);
+    }
 
     private static double normalizeHeading(double heading) {
         heading = (heading) % 360;
