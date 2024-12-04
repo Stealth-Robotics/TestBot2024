@@ -57,7 +57,7 @@ public class ExtenderSubsystem extends SubsystemBase {
     public void periodic() {
         if (motorRunTo) {
             double power = pidf.calculate(extendMotor.getCurrentPosition());
-            extendMotor.setPower(-power * maxSpeed);
+            extendMotor.setPower(power * maxSpeed);
 
             if (pidf.atSetPoint()) {
                 extendMotor.setPower(-.1);
@@ -100,7 +100,7 @@ public class ExtenderSubsystem extends SubsystemBase {
         motorRunTo = true;
         while (motorRunTo) {
             double power = pidf.calculate(extendMotor.getCurrentPosition());
-            extendMotor.setPower(-power * maxSpeed);
+            extendMotor.setPower(power * maxSpeed);
 
             if (pidf.atSetPoint()) {
                 extendMotor.setPower(-.1);

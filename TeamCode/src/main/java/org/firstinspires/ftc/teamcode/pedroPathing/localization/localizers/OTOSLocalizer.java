@@ -46,7 +46,7 @@ public class OTOSLocalizer extends Localizer {
 
     // Adjusts this to compensate for linear errors in the OTOS
     // Use the "Forward Velocity Tuner" to calculate this value
-    private static final double LinearScalar = 1.015;
+    private static final double LinearScalar = 0.85; //1.015;
 
     // Adjust these 2 values if your sensor is not at the center
     // of rotation of your robot

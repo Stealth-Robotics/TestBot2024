@@ -86,6 +86,8 @@ public class TeleStealth extends StealthOpMode {
         driver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(()->lifter.setPosition(.5)));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new InstantCommand(()->lifter.setPosition(.99)));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(()->lifter.setPosition(.001)));
+        driver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(()->extender.setPosition(.5)));
+
         driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(()->ls.togglePipeline()));
 
 

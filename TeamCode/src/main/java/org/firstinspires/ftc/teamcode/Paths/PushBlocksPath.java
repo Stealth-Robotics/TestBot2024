@@ -6,23 +6,35 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 
 public class PushBlocksPath {
-    public static final Pose StartPos = new Pose(8, 48, 0);
+    public static Pose startPos = new Pose(8, 48, 0);
     public final PathChain pathChain;
 
-    public PushBlocksPath() {
+    private final LifterSubsystem lss;
+
+    public PushBlocksPath(LifterSubsystem lss)  {
         pathChain = PushBlocks().build();
+        this.lss = lss;
     }
 
-    public static PathBuilder PushBlocks() {
+    public void updatePose(Pose pose) {
+        startPos = pose;
+    }
+
+    public Pose getPose() {
+        return startPos;
+    }
+
+    public PathBuilder PushBlocks() {
         PathBuilder builder = new PathBuilder();
 
         return  builder
                 .addPath(
                         // Line 1
                         new BezierLine(
-                                new Point(8.000, 48.000, Point.CARTESIAN),
+                                new Point(startPos.getX(), startPos.getY(), Point.CARTESIAN),
                                 new Point(10.286, 45.351, Point.CARTESIAN)
                         )
                 )
@@ -44,6 +56,7 @@ public class PushBlocksPath {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addParametricCallback(0, ()-> lss.doPosition(.5))
                 .addPath(
                         // Line 4
                         new BezierLine(
@@ -77,5 +90,6 @@ public class PushBlocksPath {
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0));
+
     }
 }

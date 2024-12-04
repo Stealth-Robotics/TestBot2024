@@ -1,72 +1,76 @@
 package org.firstinspires.ftc.teamcode.Auto;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.qualcomm.hardware.limelightvision.LLResult;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Paths.OutAndBackPath;
+import org.firstinspires.ftc.teamcode.common.AutoBase;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
-import org.firstinspires.ftc.teamcode.subsystems.FollowerSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.LimeLightSubsystem;
-import org.firstinspires.ftc.teamcode.utils.MovementUtil;
-import org.stealthrobotics.library.opmodes.StealthOpMode;
 
-@Autonomous(name = "Out and Back", group = "examples")
-public class PathExampleAuto extends StealthOpMode {
+@Autonomous(name = "Blue pathing example", group = "examples")
+public class PathExampleAuto extends AutoBase {
 
-    private Telemetry telemetryA;
-    private FollowerSubsystem followerSubsystem;
 
-    private LimeLightSubsystem limelightSubsystem;
+   private OutAndBackPath path;
 
-    private OutAndBackPath outAndBackPath;
-
+   private final SequentialCommandGroup commandGroup = new SequentialCommandGroup();
 
     /**
      * Override this to setup your hardware, commands, button bindings, etc.
      */
     @Override
     public void initialize() {
-        this.telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        this.followerSubsystem = new FollowerSubsystem(hardwareMap, telemetry);
-        this.limelightSubsystem = new LimeLightSubsystem(hardwareMap, telemetry);
-        LifterSubsystem lss = new LifterSubsystem(hardwareMap, telemetry);
-        this.outAndBackPath = new OutAndBackPath(lss);
-        register(this.followerSubsystem, this.limelightSubsystem);
-        telemetryA.addLine("this follows a square path of 4x4");
+
+        this.Init();
+        telemetryA.addLine("Example path of using the follower");
+        path = new OutAndBackPath(this);
+        commandGroup.addCommands(initPath(), DoPath());
     }
 
     @Override
     public Command getAutoCommand() {
+        return commandGroup;
+    }
+
+    private Command initPath() {
         return new InstantCommand(()->
         {
-            Follower follower = this.followerSubsystem.getFollower();
-            follower.setStartingPose(outAndBackPath.StartPose);
-            follower.update();
-            follower.followPath(outAndBackPath.pathChain);
+            Follower follower = followerSubsystem.getFollower();
+            if (avgPose != null) {
+                path.setStartPose(avgPose);
+            } else if (lastPose != null) {
+                path.setStartPose(lastPose);
+            }
+            follower.setStartingPose(path.getStartPose());
             follower.update();
         });
+
     }
 
-    @Override
-    public void whileWaitingToStart() {
-        LLResult result = limelightSubsystem.getLastResult();
-        if (result != null && result.isValid()){
-            Pose3D pose3d = result.getBotpose();
-            outAndBackPath.StartPose = MovementUtil.getFollowPoseFromLimelight(pose3d);
-            telemetryA.addData("CAM X", outAndBackPath.StartPose.getX());
-            telemetryA.addData("CAM Y", outAndBackPath.StartPose.getY());
-            telemetryA.addData("Heading", Math.toDegrees(outAndBackPath.StartPose.getHeading()));
-            telemetryA.update();
-        }
+    private Command DoPath() {
+        Follower follower = followerSubsystem.getFollower();
+        assert (path.pathChain.size() == 2);
 
+        return new SequentialCommandGroup(
+                new InstantCommand(() ->follower.followPath(path.pathChain.getPath(0))),
+                new WaitCommand(1000),
+                new InstantCommand(() -> {
+                        getExtender().setPosition(.99);
+                        getLifter().setPosition(.99);
+                }),
+                new WaitCommand(500),
+                new InstantCommand(() ->follower.followPath(path.pathChain.getPath(1))),
+                new WaitCommand(1000),
+                new InstantCommand(() ->
+                {
+                    getExtender().setPosition(0.01);
+                    getLifter().setPosition(0.01);
+                })
 
-        //CommandScheduler.getInstance().run();
+        );
     }
+
 }

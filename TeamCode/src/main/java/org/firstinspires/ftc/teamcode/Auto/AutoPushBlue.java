@@ -5,13 +5,18 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Paths.PushBlocksPath;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.subsystems.FollowerSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LimeLightSubsystem;
+import org.firstinspires.ftc.teamcode.utils.MovementUtil;
 import org.stealthrobotics.library.opmodes.StealthOpMode;
 
 @Config
@@ -35,9 +40,10 @@ public class AutoPushBlue extends StealthOpMode {
         telemetryA.addLine("Example of pushing blue samples");
         this.followerSubsystem = new FollowerSubsystem(hardwareMap, telemetry);
         this.limelightSubsystem = new LimeLightSubsystem(hardwareMap, telemetry);
-        this.path = new PushBlocksPath();
+        LifterSubsystem lss = new LifterSubsystem(hardwareMap, telemetry);
+        register(lss);
+        this.path = new PushBlocksPath(lss);
         register(this.followerSubsystem, this.limelightSubsystem);
-
     }
 
     @Override
@@ -45,7 +51,7 @@ public class AutoPushBlue extends StealthOpMode {
         return new InstantCommand(()->
         {
             Follower follower = this.followerSubsystem.getFollower();
-            follower.setStartingPose(PushBlocksPath.StartPos);
+            follower.setStartingPose(PushBlocksPath.startPos);
             follower.update();
             follower.followPath(path.pathChain, true);
             follower.update();
@@ -54,8 +60,15 @@ public class AutoPushBlue extends StealthOpMode {
 
     @Override
     public void whileWaitingToStart() {
-        // TODO: Add code that checks the limelight for pose and
-        // update the follower accordingly.
-        //CommandScheduler.getInstance().run();
+        LLResult result = limelightSubsystem.getLastResult();
+        if (result != null && result.isValid()) {
+            Pose3D pose3d = result.getBotpose();
+            Pose updatedPose = MovementUtil.getFollowPoseFromLimelight(pose3d);
+            path.updatePose(MovementUtil.getFollowPoseFromLimelight(pose3d));
+            telemetryA.addData("Field Fixed X", updatedPose.getX());
+            telemetryA.addData("Field Fixed Y", updatedPose.getY());
+            telemetryA.addData("Heading Fixed", Math.toDegrees(updatedPose.getHeading()));
+            telemetryA.update();
+        }
     }
 }
