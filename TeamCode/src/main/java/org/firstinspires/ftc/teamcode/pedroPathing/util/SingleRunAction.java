@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.util;
 
+import androidx.annotation.NonNull;
+
 /**
  * This is the SingleRunAction class. It handles running Runnables once, until a reset is called.
  * It also forms the basis of the PathCallback class. Basically, if you want to run a certain action
@@ -56,5 +58,10 @@ public class SingleRunAction {
      */
     public void reset() {
         hasBeenRun = false;
+    }
+
+    @NonNull
+    protected Runnable getRunnable() {
+        return runnable;
     }
 }

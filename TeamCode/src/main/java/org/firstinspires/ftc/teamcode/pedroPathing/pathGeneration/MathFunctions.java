@@ -81,6 +81,16 @@ public class MathFunctions {
     }
 
     /**
+     * This returns the inverse of an angle. This operates in radians.
+     *
+     * @param angle the angle.
+     * @return returns the inverse of the angle.
+     */
+    public static double invertAngle(double angle) {
+        return normalizeAngle(angle + Math.PI);
+    }
+
+    /**
      * This returns the smallest angle between two angles. This operates in radians.
      *
      * @param one one of the angles.

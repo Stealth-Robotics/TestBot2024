@@ -18,15 +18,16 @@ public class OutAndBackPath extends PathManager {
     
     public OutAndBackPath() {
         super(DEFAULT_START_POINT);
-        fullChain = buildFullPathChain();
+        this.bluePathChain = buildBluePathChain();
+        this.redPathChain = buildRedPathChain();
         // chop up the full path chain into separate path chains
         // so that other operations (like lifter movements) can be done at each segment
-        addPathSegment(buildSegment(0));
-        addPathSegment(buildSegment(1));
+        createSegment(0);
+        createSegment(1);
+        buildSegments();
     }
-   
 
-    public PathChain buildFullPathChain() {
+    public PathChain buildBluePathChain() {
         PathBuilder builder = new PathBuilder();
 
         return builder
@@ -52,6 +53,14 @@ public class OutAndBackPath extends PathManager {
                 )
                 .setConstantHeadingInterpolation(startPose.getHeading())
                 .build();
+    }
 
+    /**
+     * Builds the red path chain
+     * @return Returns the Red PathChain for when on the Red Alliance
+     */
+    protected PathChain buildRedPathChain() {
+        // Can just invert the blue chain to get the red chain
+        return invertPathChain(buildBluePathChain());
     }
 }

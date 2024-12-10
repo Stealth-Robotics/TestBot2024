@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,9 +16,6 @@ import java.util.List;
 
 public class MovementUtil {
 
-    // Follower uses 0 - 144 inches field size starting at blue observation zone
-    public static double FIELD_SIZE_X_INCHES = 144;
-    public static double FIELD_SIZE_Y_INCHES = 144;
 
     // Limelight uses meters starting at the center of the field
     public static double FIELD_POSE_X_MIN_METERS = -1.8288;
@@ -66,8 +64,8 @@ public class MovementUtil {
 
         // now translate to follower coordinates
         // Note X and Y are swapped in the limelight coordinates
-        followPose.setY(position.x + (FIELD_SIZE_X_INCHES / 2));
-        followPose.setX(-position.y + (FIELD_SIZE_Y_INCHES / 2));
+        followPose.setY(position.x + (FollowerConstants.FIELD_SIZE_X_INCHES / 2));
+        followPose.setX(-position.y + (FollowerConstants.FIELD_SIZE_Y_INCHES / 2));
         return followPose;
     }
 

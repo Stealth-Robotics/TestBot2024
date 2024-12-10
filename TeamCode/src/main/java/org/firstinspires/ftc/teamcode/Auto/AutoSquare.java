@@ -13,7 +13,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 @Autonomous(name = "Auto Square", group = "examples")
 public class AutoSquare extends OpMode {
 
-
     private Follower follower;
 
     private PathChain pathChain;

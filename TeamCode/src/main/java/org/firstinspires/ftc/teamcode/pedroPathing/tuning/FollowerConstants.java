@@ -208,4 +208,8 @@ public class FollowerConstants {
 
     // Feed forward constant added on to the secondary drive PIDF
     public static double secondaryDrivePIDFFeedForward = 0.01;
+
+    // Follower uses 0 - 144 inches field size starting at blue observation zone
+    public static double FIELD_SIZE_X_INCHES = 144;
+    public static double FIELD_SIZE_Y_INCHES = 144;
 }

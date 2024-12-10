@@ -33,20 +33,20 @@ public class AutoPushBlock extends StealthAutoMode {
             } else if (lastPose != null) {
                 path.setStartPose(lastPose);
             }
+
             follower.setStartingPose(path.getStartPose());
             follower.update();
         });
 
     }
     private Command runPath() {
-        Follower follower = followerSubsystem.getFollower();
-        assert (path.getSegmentCount() == 2);
+       assert (path.getSegmentCount() == 2);
         return
                 new SequentialCommandGroup(
                         followerSubsystem.followPathCommand(path.getNextSegment()),
-                        ess.setPositionCommand(.9),
-                        followerSubsystem.followPathCommand(path.getNextSegment()
-                        )
+                        lss.setPositionCommand(.5),
+                        followerSubsystem.followPathCommand(path.getNextSegment()),
+                        lss.setPositionCommand(0.1)
                 );
     }
 

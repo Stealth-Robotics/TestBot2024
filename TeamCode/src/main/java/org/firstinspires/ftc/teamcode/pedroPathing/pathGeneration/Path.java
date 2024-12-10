@@ -483,4 +483,52 @@ public class Path {
     public double[][] getDashboardDrawingPoints() {
         return curve.getDashboardDrawingPoints();
     }
+
+    /**
+     * field swaps the points of the path and returns a new path (red vs blue)
+     *  Note since all Bezier* objects are derived form BezierCurve it is easiest to create curves
+     * @return new path with inverted points (as a BezierCurve)
+     */
+    public Path getInvertedCopy() {
+
+        Path invertedPath;
+        ArrayList<Point> invertedPoints = new ArrayList<>();
+        for (Point point : getControlPoints()) {
+            invertedPoints.add(invertPoint(point));
+        }
+
+        switch (this.pathType()) {
+            case "line":
+                invertedPath = new Path(new BezierLine(invertedPoints.get(0), invertedPoints.get(1)));
+                break;
+            case "point":
+                invertedPath = new Path(new BezierPoint(invertedPoints.get(0)));
+                break;
+            case "curve":
+            default:
+                invertedPath = new Path(new BezierCurve(invertedPoints));
+                break;
+        }
+
+        if (this.isTangentHeadingInterpolation) {
+            invertedPath.setTangentHeadingInterpolation();
+        } else {
+            invertedPath.setLinearHeadingInterpolation(MathFunctions.invertAngle(this.startHeading), MathFunctions.invertAngle(this.endHeading), this.linearInterpolationEndTime);
+        }
+
+        if (this.followTangentReversed){
+            invertedPath.setReversed(true);
+        }
+
+        return invertedPath;
+    }
+
+    /**
+     * Invert the given point to the other side of the field
+     * @param point point to invert
+     * @return The inverted point
+     */
+    private static Point invertPoint(Point point) {
+        return new Point(FollowerConstants.FIELD_SIZE_X_INCHES - point.getX(), FollowerConstants.FIELD_SIZE_Y_INCHES - point.getY(), Point.CARTESIAN);
+    }
 }

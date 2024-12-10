@@ -75,4 +75,13 @@ public class PathCallback extends SingleRunAction {
     public int getIndex() {
         return index;
     }
+
+    /**
+     * This clones this PathCallback with a new index.
+     * @param newIndex The new index.
+     * @return The cloned PathCallback.
+     */
+    public PathCallback clone(int newIndex) {
+        return new PathCallback(startCondition, super.getRunnable(), type, newIndex);
+    }
 }

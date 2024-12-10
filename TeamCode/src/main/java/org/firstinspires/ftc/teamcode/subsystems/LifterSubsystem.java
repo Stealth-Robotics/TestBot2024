@@ -114,6 +114,13 @@ public class LifterSubsystem extends StealthSubsystem {
         return this.runOnce(()-> setPosition(position))
                 .andThen(new WaitUntilCommand(()-> !motorRunTo));
     }
+
+    public Command setPositionCommand(double position, long timeout) {
+        long endTime = System.currentTimeMillis() + timeout;
+        return this.runOnce(()-> setPosition(position))
+                .andThen(new WaitUntilCommand(()-> !motorRunTo || System.currentTimeMillis() > endTime));
+    }
+
     public DcMotorEx getMotor1(){
         return liftMotor;
     }

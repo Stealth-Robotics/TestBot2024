@@ -71,6 +71,7 @@ public abstract class StealthAutoMode extends StealthOpMode {
      */
     @Override
     public void whileWaitingToStart() {
+        telemetryA.addData("Alliance", Alliance.get().toString());
         LLResult result = limelightSubsystem.getLastResult();
         if (result != null && result.isValid()) {
             Pose3D pose3d = result.getBotpose();
