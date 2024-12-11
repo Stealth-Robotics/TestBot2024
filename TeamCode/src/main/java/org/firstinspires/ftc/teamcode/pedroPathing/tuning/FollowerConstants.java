@@ -38,9 +38,9 @@ public class FollowerConstants {
 
     // Translational PIDF coefficients (don't use integral)
     public static CustomPIDFCoefficients translationalPIDFCoefficients = new CustomPIDFCoefficients(
-            0.1,
+           0.09, //.1
             0,
-            0.013,
+            0.03, //0.013
             0);
 
     // Translational Integral
@@ -91,7 +91,8 @@ public class FollowerConstants {
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
-    public static double forwardZeroPowerAcceleration = -20; // -38.7776 LOW // -51.637 FULL;
+    // The smaller (negative) the number the further the robot will travel under 0 power
+    public static double forwardZeroPowerAcceleration = -15; // -38.7776 LOW // -51.637 FULL;
 
     // Acceleration of the drivetrain when power is cut in inches/second^2 (should be negative)
     // if not negative, then the robot thinks that its going to go faster under 0 power
@@ -136,10 +137,10 @@ public class FollowerConstants {
     public static int APPROXIMATION_STEPS = 1000;
 
     // This is scales the translational error correction power when the Follower is holding a Point.
-    public static double holdPointTranslationalScaling = 0.45;
+    public static double holdPointTranslationalScaling = .6; //0.45;
 
     // This is scales the heading error correction power when the Follower is holding a Point.
-    public static double holdPointHeadingScaling = 0.35;
+    public static double holdPointHeadingScaling = .5; //0.35;
 
     // This is the number of times the velocity is recorded for averaging when approximating a first
     // and second derivative for on the fly centripetal correction. The velocity is calculated using

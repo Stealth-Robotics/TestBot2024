@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.util.Drawing;
  * @version 1.0, 5/6/2024
  */
 @Config
-@Autonomous(name = "Turn Localizer Tuner", group = "Tuning")
 @Disabled
+@Autonomous(name = "Turn Localizer Tuner", group = "Tuning")
 public class TurnTuner extends OpMode {
     private PoseUpdater poseUpdater;
     private DashboardPoseTracker dashboardPoseTracker;

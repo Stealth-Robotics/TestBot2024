@@ -63,22 +63,22 @@ public class PushSamplesPath extends PathManager {
                         new BezierCurve(
                                 new Point(12.000, 48.000, Point.CARTESIAN),
                                 new Point(17.396, 35.154, Point.CARTESIAN),
-                                new Point(63.000, 35.400, Point.CARTESIAN)
+                                new Point(60.000, 35.400, Point.CARTESIAN)
                         )
                 )
                 .setTangentHeadingInterpolation()
                 .addPath(
                         // move down to blocks
                         new BezierLine(
-                                new Point(63.000, 35.400, Point.CARTESIAN),
-                                new Point(63.000, 26, Point.CARTESIAN)
+                                new Point(60.000, 35.400, Point.CARTESIAN),
+                                new Point(60.000, 26, Point.CARTESIAN)
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .addPath(
                         // go to observation station
                         new BezierLine(
-                                new Point(63.000, 26, Point.CARTESIAN),
+                                new Point(60.000, 26, Point.CARTESIAN),
                                 new Point(15.000, 26, Point.CARTESIAN)
                         )
                 )
