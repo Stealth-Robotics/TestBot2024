@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.common;
 
-import androidx.core.math.MathUtils;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -10,6 +8,7 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ExtenderSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.FollowerSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.LifterSubsystem;
@@ -29,7 +28,6 @@ import org.stealthrobotics.library.opmodes.StealthOpMode;
  */
 public abstract class StealthAutoMode extends StealthOpMode {
 
-
     // Telemetry instances for driver station and dashboard
     protected Telemetry telemetryA;
 
@@ -39,11 +37,16 @@ public abstract class StealthAutoMode extends StealthOpMode {
     protected LifterSubsystem lss; // For controlling the lifter
     protected ExtenderSubsystem ess; // For controlling the extender
 
+    // Stores a set of commands to be executed on run.
     protected final SequentialCommandGroup commandGroup = new SequentialCommandGroup();
 
+    // Last known position of the robot
     protected Pose lastPose;
+
+    // Average position of the robot over the last 500ms
     protected Pose avgPose;
 
+    // How often to calculate the average position
     private static final long AVERAGE_WAIT_TIME = 100;
 
     private long timer = 0;
@@ -80,9 +83,6 @@ public abstract class StealthAutoMode extends StealthOpMode {
             telemetryA.addData("CAM X", fixedPose.getX());
             telemetryA.addData("CAM Y", fixedPose.getY());
             telemetryA.addData("CAM Heading", Math.toDegrees(fixedPose.getHeading()));
-            if (MathUtils.clamp(fixedPose.getX(), 0, 144) < 72) {
-                Alliance.set(Alliance.BLUE);
-            }
         }
 
         // Get average of position over time
@@ -98,8 +98,12 @@ public abstract class StealthAutoMode extends StealthOpMode {
             telemetryA.addData("CAM AVG X", avgPose.getX());
             telemetryA.addData("CAM AVG Y", avgPose.getY());
             telemetryA.addData("CAM Heading AVG", Math.toDegrees(avgPose.getHeading()));
+            if (avgPose.getX() < (FollowerConstants.FIELD_SIZE_X_INCHES / 2)) {
+                Alliance.set(Alliance.BLUE);
+            } else {
+                Alliance.set(Alliance.RED);
+            }
         }
-
     }
 
     /**

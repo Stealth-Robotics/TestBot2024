@@ -18,7 +18,6 @@ import org.stealthrobotics.library.opmodes.StealthOpMode;
 // Example of using the Stealth library for TeleOp driving
 // this example also uses pedroPathing to drive the robot
 @TeleOp(name = "A Stealth TeleOp", group = "example")
-
 public class TeleStealth extends StealthOpMode {
 
     // This is the starting position of the robot in inches. Blue home facing red bucket

@@ -54,6 +54,11 @@ public class LimeLightSubsystem extends SubsystemBase {
     // A queue of the last few LLResults in the last QUEUE_DEFAULT_TIMEOUT window
     private final Deque<LLResult> resultsQueue = new LinkedList<>();
 
+    /**
+     * Initialize the limelight camera and default to pipeline 0
+     * @param hardwareMap hardware map
+     * @param telemetry telemetry object to write data to the hub
+     */
     public LimeLightSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
         limelight = hardwareMap.get(Limelight3A.class, NAME);
         limelight.start();
@@ -146,6 +151,9 @@ public class LimeLightSubsystem extends SubsystemBase {
         return distance;
     }
 
+    /**
+     * Switches the pipeline to the next one in the enum
+     */
     public void togglePipeline(){
         Pipeline cur = Pipeline.values()[limelight.getStatus().getPipelineIndex()];
         switch (cur){
@@ -195,6 +203,10 @@ public class LimeLightSubsystem extends SubsystemBase {
         }
     }
 
+    /**
+     * Calculates the average of the last few LLResults in the queue
+     * @return Pose3D of the average
+     */
     public Pose3D getAveragePose3D() {
         List<Pose3D> poses = new ArrayList<>();
         List<Double> xValues = new ArrayList<>();
@@ -265,6 +277,11 @@ public class LimeLightSubsystem extends SubsystemBase {
                         lastPose3d.getOrientation().getAcquisitionTime()));
     }
 
+    /**
+     * Calculates the average of a list of values
+     * @param values list of values
+     * @return average
+     */
     private static double calculateAverage(List<Double> values) {
         if (values.isEmpty()) {
             return 0.0;
@@ -276,6 +293,12 @@ public class LimeLightSubsystem extends SubsystemBase {
         return sum / values.size();
     }
 
+    /**
+     * Calculates the standard deviation of a list of values
+     * @param values list of values
+     * @param average average of the values
+     * @return standard deviation
+     */
     private static double calculateStandardDeviation(List<Double> values, double average) {
         if (values.isEmpty()) {
             return 0.0;
@@ -287,6 +310,12 @@ public class LimeLightSubsystem extends SubsystemBase {
         return Math.sqrt(sumOfSquaredDeviations / (values.size() - 1));
     }
 
+    /**
+     * Calculates the average of a list of Pose3D objects
+     * @param poses list of Pose3D objects
+     * @param coordinate x or y
+     * @return average
+     */
     private static double calculateAveragePose3D(List<Pose3D> poses, String coordinate) {
         if (poses.isEmpty()) {
             return 0.0;
@@ -302,6 +331,11 @@ public class LimeLightSubsystem extends SubsystemBase {
         return sum / poses.size();
     }
 
+    /**
+     * Calculates the average yaw of a list of Pose3D objects
+     * @param poses list of Pose3D objects
+     * @return average yaw
+     */
     private static double calculateAverageYaw(List<Pose3D> poses) {
         if (poses.isEmpty()) {
             return 0.0;

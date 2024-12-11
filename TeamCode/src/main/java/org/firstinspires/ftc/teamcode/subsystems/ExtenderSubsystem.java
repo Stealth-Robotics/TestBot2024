@@ -40,7 +40,6 @@ public class ExtenderSubsystem extends StealthSubsystem {
     // PIDF to control arm movement keeps the arm from overshooting etc.
     private final PIDFController pidf = new PIDFController(kP, kI, kD, kF);
 
-
     public ExtenderSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
 
         this.telemetryA = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -53,7 +52,7 @@ public class ExtenderSubsystem extends StealthSubsystem {
     }
 
     /**
-     * Called automatically when the subsystem is registered.
+     * Called by the scheduler periodically if the subsystem is registered.
      */
     @Override
     public void periodic() {
@@ -67,10 +66,7 @@ public class ExtenderSubsystem extends StealthSubsystem {
             }
         }
 
-//        telemetryA.addData("Extend Target:", extendMotor.getTargetPosition());
-//        telemetryA.addData("Extend Mode:", extendMotor.getMode());
         telemetryA.addData("Extend Position:", extendMotor.getCurrentPosition());
-//        telemetryA.addData("Extender Power:", extendMotor.getPower());
         telemetryA.addData("Extender IsBusy:", extendMotor.isBusy());
         telemetryA.addData("Extender RunTo:", motorRunTo);
     }
@@ -96,7 +92,7 @@ public class ExtenderSubsystem extends StealthSubsystem {
     /**
      * Starts the motor moving but does not wait for it to reach the desired position
      * @param position % of the arm range
-     * @return
+     * @return A Command that can be run
      */
     public Command startSetPositionCommand(double position) {
         return this.runOnce(()-> setPosition(position));
@@ -163,6 +159,4 @@ public class ExtenderSubsystem extends StealthSubsystem {
     public DcMotorEx getMotor1() {
         return extendMotor;
     }
-
-
 }

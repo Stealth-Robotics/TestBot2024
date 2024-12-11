@@ -16,10 +16,9 @@ public class ExtenderDefaultCommand extends CommandBase {
     private final MultipleTelemetry telemetryA;
     private final DoubleSupplier leftTrigger;
     private final DoubleSupplier rightTrigger;
-    //private final DoubleSupplier down;
-    //private final double zeroThreshold = 50;
     private boolean manualControl = false;
-    //public static double zeroPowerConstant = -0.1;
+    private static final double axisDeadZone = 0.05;
+
 
     public ExtenderDefaultCommand(ExtenderSubsystem extender, Telemetry telemetry, DoubleSupplier leftTrigger, DoubleSupplier rightTrigger) {
         addRequirements(extender);
@@ -35,7 +34,7 @@ public class ExtenderDefaultCommand extends CommandBase {
         double rightPower = rightTrigger.getAsDouble();
         double power = rightPower - leftPower;
 
-        if(power > 0.05 || power < -0.05) {
+        if(power > axisDeadZone || power < -axisDeadZone) {
             extender.stopRunTo();
             if (!extender.getMotor1().getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)) {
                 extender.getMotor1().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -46,7 +45,7 @@ public class ExtenderDefaultCommand extends CommandBase {
             telemetryA.addData("Manual Extend", power);
         }else if (manualControl) {
 
-            extender.setPower(-0.1);
+            extender.setPower(0);
             manualControl = false;
         }
     }

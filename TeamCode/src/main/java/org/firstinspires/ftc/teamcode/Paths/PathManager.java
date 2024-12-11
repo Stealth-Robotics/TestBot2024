@@ -17,16 +17,13 @@ import java.util.List;
 /**
  * Manages a sequence of path segments for robot navigation. Designed to be
  * extended by subclasses to provide specific path chains.
- * use https://pedro-path-generator.vercel.app/ to build your own paths
+ * use <a href="https://pedro-path-generator.vercel.app/">...</a> to build your own paths
  */
 public class PathManager {
     protected Pose startPose;
-    protected PathChain fullChain;
 
     protected PathChain bluePathChain;
     protected PathChain redPathChain;
-
-    protected final List<PathChain> pathSegments = new ArrayList<>();
 
     protected final List<PathChain> redPathSegments = new ArrayList<>();
     protected final List<PathChain> bluePathSegments = new ArrayList<>();
@@ -55,13 +52,22 @@ public class PathManager {
             return null;
         }
 
-        return Alliance.isRed() ? redPathSegments.get(currentPath) : bluePathSegments.get(currentPath);
+        return Alliance.isRed() ? redPathSegments.get(currentPath++) : bluePathSegments.get(currentPath++);
+    }
+
+    /**
+     * Retrieves the full path chain for the current alliance.
+     *
+     * @return The full path chain for the current alliance.
+     */
+    public PathChain getFullPath() {
+        return Alliance.isRed() ? redPathChain : bluePathChain;
     }
 
     /**
      * builds Red and Blue segments to break the full paths up into smaller segments
      * This allows doing other actions at the end of each segment and not having to
-     * break up the entire path you get from https://pedro-path-generator.vercel.app/
+     * break up the entire path you get from <a href="https://pedro-path-generator.vercel.app/">...</a>
      */
     protected void buildSegments()
     {
@@ -123,13 +129,10 @@ public class PathManager {
         this.startPose = startPose;
 
         // Set alliance based on field pose
-        if (startPose.getX() > FollowerConstants.FIELD_SIZE_X_INCHES / 2
-        && Alliance.isBlue()) {
+        if (startPose.getX() > (FollowerConstants.FIELD_SIZE_X_INCHES / 2)) {
             Alliance.set(Alliance.RED);
-            this.fullChain = this.redPathChain;
-        } else if (Alliance.isRed()){
+          } else {
             Alliance.set(Alliance.BLUE);
-            this.fullChain = this.bluePathChain;
         }
     }
 
@@ -162,5 +165,4 @@ public class PathManager {
         invertedPathChain.setCallbacks(pathChain.getCallbacks());
         return invertedPathChain;
     }
-
 }

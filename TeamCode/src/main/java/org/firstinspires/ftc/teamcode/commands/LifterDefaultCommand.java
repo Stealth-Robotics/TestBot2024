@@ -15,10 +15,8 @@ public class LifterDefaultCommand extends CommandBase {
     private final LifterSubsystem lifter;
     private final MultipleTelemetry telemetryA;
     private final DoubleSupplier axis;
-    //private final DoubleSupplier down;
-    //private final double zeroThreshold = 50;
     private boolean manualControl = false;
-    //public static double zeroPowerConstant = -0.1;
+    private static final double axisDeadZone = 0.05;
 
     public LifterDefaultCommand(LifterSubsystem lifter, Telemetry telemetry, DoubleSupplier axis) {
         addRequirements(lifter);
@@ -30,17 +28,17 @@ public class LifterDefaultCommand extends CommandBase {
     @Override
     public void execute() {
         double power = axis.getAsDouble();
-        if(power > 0.05 || power < -0.05) {
+        if(power > axisDeadZone || power < -axisDeadZone) {
             lifter.stopRunTo();
             if (!lifter.getMotor1().getMode().equals(DcMotor.RunMode.RUN_WITHOUT_ENCODER)) {
                 lifter.getMotor1().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
             manualControl = true;
-            lifter.setPower(power); //Manual control
-            telemetryA.addData("Manual Lift", power);
-        }else if (manualControl) {
+            lifter.setPower(power);
 
+        }else if (manualControl) {
+            // holds the lift here
             lifter.setPower(-0.1);
             manualControl = false;
         }

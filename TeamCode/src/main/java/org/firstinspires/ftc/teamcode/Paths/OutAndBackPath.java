@@ -5,6 +5,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierLine;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathBuilder;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
+import org.firstinspires.ftc.teamcode.pedroPathing.tuning.FollowerConstants;
+import org.stealthrobotics.library.Alliance;
 
 /**
  * Example of building a path chain. and chunking it into segments.
@@ -14,10 +16,21 @@ public class OutAndBackPath extends PathManager {
 
     // Sets the default start point for this path. Use Limelight during whileWaitingToStart to
     // update this location in your Command code.
-    private static final Pose DEFAULT_START_POINT = new Pose(9, 72, Math.toRadians(0));
-    
+    private static final Pose DEFAULT_START_POINT_BLUE = new Pose(
+            9, 72,
+            Math.toRadians(0));
+
+    private static final Pose DEFAULT_START_POINT_RED = new Pose(
+            FollowerConstants.FIELD_SIZE_X_INCHES - 9,
+            FollowerConstants.FIELD_SIZE_Y_INCHES - 72,
+            Math.toRadians(180));
     public OutAndBackPath() {
-        super(DEFAULT_START_POINT);
+        super(DEFAULT_START_POINT_BLUE);
+
+        if (Alliance.isRed()) {
+            startPose = DEFAULT_START_POINT_RED;
+        }
+
         this.bluePathChain = buildBluePathChain();
         this.redPathChain = buildRedPathChain();
         // chop up the full path chain into separate path chains

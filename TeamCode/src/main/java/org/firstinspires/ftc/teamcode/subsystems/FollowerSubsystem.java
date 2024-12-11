@@ -168,6 +168,13 @@ public class FollowerSubsystem extends StealthSubsystem {
         return this.runOnce(()-> follower.followPath(path,holdPoint))
                 .andThen(new WaitUntilCommand(()-> !follower.isBusy()));
     }
+
+    public Command followPathCommand(PathChain path, long timeout, boolean holdPoint){
+        long endtime = System.currentTimeMillis() + timeout;
+        return this.runOnce(()-> follower.followPath(path,holdPoint))
+                .andThen(new WaitUntilCommand(()-> (!follower.isBusy() || System.currentTimeMillis() > endtime)));
+
+    }
     public void setPose(Pose pose){
         follower.setPose(pose);
     }

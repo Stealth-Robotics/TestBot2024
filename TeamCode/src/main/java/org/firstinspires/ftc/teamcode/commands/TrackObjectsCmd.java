@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LimeLightSubsystem;
 
 /*
 * This example is for tracking objects using the Limelight.
+* Still a work in progress
 */
 public class TrackObjectsCmd extends CommandBase {
     private final FollowerSubsystem followerSubsystem;
@@ -32,7 +33,6 @@ public class TrackObjectsCmd extends CommandBase {
         this.followerSubsystem = followerSubsystem;
         this.limelightSubsystem = limelightSubsystem;
         this.telemetryA = telemetryA;
-
     }
 
     public void toggleStrafeTrack() {
@@ -59,7 +59,6 @@ public class TrackObjectsCmd extends CommandBase {
         }
     }
 
-
     @Override
     public void execute() {
         if (!doExecute) {
@@ -70,11 +69,11 @@ public class TrackObjectsCmd extends CommandBase {
         follower.updatePose();
         Pose curPos = follower.getPose();
         LLResult result = limelightSubsystem.getLastResult();
-        if (result != null && result.isValid() && result.getStaleness() < 500) {
+        if (result != null && result.isValid() && result.getStaleness() < 50) {
             if (strafeTrack) {
                 StrafeTrack(curPos, result.getTx());
             } else {
-               followerSubsystem.updateFollowerHeading(-result.getTx(), 1);
+               followerSubsystem.updateFollowerHeading(-result.getTx(), .5);
             }
 
             //telemetryA.addData("Cam X", result.getTx());

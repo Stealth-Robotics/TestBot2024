@@ -3,24 +3,23 @@ package org.firstinspires.ftc.teamcode.Auto;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.Paths.PushBlocksPath;
+import org.firstinspires.ftc.teamcode.Paths.PushSamplesPath;
 import org.firstinspires.ftc.teamcode.common.StealthAutoMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
 /**
  * Example of pushing a blue block to the observation station.
- * Right now it is setup for blue only will build a path reverser soon
+ * if the word blue is used in name or group then Alliance is blue.
+ * This can later be updated by the limelight if configured so
  */
-@Autonomous(name = "Blue Push Block", group = "examples")
-public class AutoPushBlock extends StealthAutoMode {
-    private PushBlocksPath path;
+public class AutoPushSamples extends StealthAutoMode {
+    private PushSamplesPath path;
 
     @Override
     public void initialize() {
         super.initialize();
-        path = new PushBlocksPath();
+        path = new PushSamplesPath();
         commandGroup.addCommands(initPath(), runPath());
     }
 
@@ -39,14 +38,16 @@ public class AutoPushBlock extends StealthAutoMode {
         });
 
     }
+
     private Command runPath() {
        assert (path.getSegmentCount() == 2);
         return
                 new SequentialCommandGroup(
+                        lss.startSetPositionCommand(0.5),
                         followerSubsystem.followPathCommand(path.getNextSegment()),
-                        lss.setPositionCommand(.5),
-                        followerSubsystem.followPathCommand(path.getNextSegment()),
-                        lss.setPositionCommand(0.1)
+                        //lss.endSetPositionCommand(6000),
+                        followerSubsystem.followPathCommand(path.getNextSegment(), true),
+                        lss.setPositionCommand(0.01, 500)
                 );
     }
 
