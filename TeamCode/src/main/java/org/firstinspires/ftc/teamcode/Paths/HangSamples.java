@@ -10,6 +10,9 @@ import org.stealthrobotics.library.Alliance;
 
 
 public class HangSamples extends PathManager {
+
+    private static final double rotaionEnd = 0.9;
+    
     // Sets the default start point for this path. Use Limelight during whileWaitingToStart to
     // update this location in your Command code.
     private static final Pose DEFAULT_START_POINT_BLUE = new Pose(
@@ -62,7 +65,7 @@ public class HangSamples extends PathManager {
               new Point(8.000, 35.000, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180), rotaionEnd)
           .addPath(
             // Line 3
             new BezierCurve(
@@ -71,7 +74,7 @@ public class HangSamples extends PathManager {
               new Point(39.000, 60.500, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0), rotaionEnd)
           .addPath(
             // Line 4
             new BezierCurve(
@@ -81,7 +84,7 @@ public class HangSamples extends PathManager {
               new Point(60.000, 36.000, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180), rotaionEnd)
           .addPath(
             // Line 5
             new BezierLine(
@@ -154,7 +157,7 @@ public class HangSamples extends PathManager {
               new Point(39.000, 60.700, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0), rotaionEnd)
           .addPath(
             // Line 14
             new BezierCurve(
@@ -163,7 +166,7 @@ public class HangSamples extends PathManager {
               new Point(8.000, 35.000, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180), rotaionEnd)
           .addPath(
             // Line 15
             new BezierCurve(
@@ -172,7 +175,7 @@ public class HangSamples extends PathManager {
               new Point(39.000, 61.000, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
+          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0), rotaionEnd)
           .addPath(
             // Line 16
             new BezierCurve(
@@ -181,7 +184,7 @@ public class HangSamples extends PathManager {
               new Point(8.000, 35.000, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180))
+          .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(180), rotaionEnd)
           .addPath(
             // Line 17
             new BezierCurve(
@@ -190,8 +193,8 @@ public class HangSamples extends PathManager {
               new Point(39.000, 61.500, Point.CARTESIAN)
             )
           )
-          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0))
-                .build();
+          .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(0), rotaionEnd)
+        .build();
     }
 
     /**
