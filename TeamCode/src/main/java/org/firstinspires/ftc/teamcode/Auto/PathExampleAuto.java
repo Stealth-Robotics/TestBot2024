@@ -5,18 +5,17 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.Paths.OutAndBackPath;
+import org.firstinspires.ftc.teamcode.Paths.HangSamplesPath;
 import org.firstinspires.ftc.teamcode.common.StealthAutoMode;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
 
-@Disabled
+
 @Autonomous(name = "Blue pathing example", group = "examples")
 public class PathExampleAuto extends StealthAutoMode {
 
 
-   private OutAndBackPath path;
+   private HangSamplesPath path;
 
     /**
      * Override this to setup your hardware, commands, button bindings, etc.
@@ -26,7 +25,7 @@ public class PathExampleAuto extends StealthAutoMode {
 
         super.initialize();
         telemetryA.addLine("Example path of using the follower");
-        path = new OutAndBackPath();
+        path = new HangSamplesPath();
         commandGroup.addCommands(initPath(), runPath());
     }
 
@@ -51,16 +50,29 @@ public class PathExampleAuto extends StealthAutoMode {
     }
 
     private Command runPath() {
-        Follower follower = followerSubsystem.getFollower();
-
+        double pickupH = .2;
+        double hangH = .5;
         return new SequentialCommandGroup(
-                new InstantCommand(() ->follower.followPath(path.getNextSegment())),
-                new WaitCommand(1000),
-                setBothArms(.99),
-                new WaitCommand(500),
-                new InstantCommand(() ->follower.followPath(path.getNextSegment())),
-                new WaitCommand(1000),
-                setBothArms(.01)
+                lss.startSetPositionCommand(hangH),
+                followerSubsystem.followPathCommand(path.getNextSegment(),true),
+                lss.startSetPositionCommand(pickupH),
+                //setBothArms(.99),
+                followerSubsystem.followPathCommand(path.getNextSegment()),
+                new WaitCommand(100),
+                lss.startSetPositionCommand(hangH),
+                followerSubsystem.followPathCommand(path.getNextSegment(),true),
+                lss.startSetPositionCommand(.001),
+                followerSubsystem.followPathCommand(path.getNextSegment()),
+                lss.startSetPositionCommand(pickupH),
+                followerSubsystem.followPathCommand(path.getNextSegment()),
+                lss.startSetPositionCommand(hangH),
+                followerSubsystem.followPathCommand(path.getNextSegment(), true),
+                lss.startSetPositionCommand(pickupH),
+                followerSubsystem.followPathCommand(path.getNextSegment()),
+                lss.startSetPositionCommand(hangH),
+                followerSubsystem.followPathCommand(path.getNextSegment(), true),
+                lss.startSetPositionCommand(.001),
+                followerSubsystem.followPathCommand(path.getNextSegment())
         );
     }
 

@@ -75,10 +75,10 @@ public class PathManager {
         redPathSegments.clear();
         currentPath = 0;
         
-        if (pathSegmentIndices.size() == 0)
+        if (pathSegmentIndices.isEmpty())
         {
-            bluePathSegments = bluePathChain;
-            redPathSegments = redPathChain;
+            bluePathSegments.add(bluePathChain);
+            redPathSegments.add(redPathChain);
             return;
         }
         
